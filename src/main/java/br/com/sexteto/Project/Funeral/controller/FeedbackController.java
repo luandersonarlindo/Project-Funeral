@@ -22,6 +22,9 @@ import br.com.sexteto.Project.Funeral.dto.feedback.FeedbackResponse;
 import br.com.sexteto.Project.Funeral.dto.feedback.FeedbackUpdateRequest;
 import br.com.sexteto.Project.Funeral.model.FeedbackModel;
 import br.com.sexteto.Project.Funeral.service.FeedbackService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,6 +34,10 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
+    @Operation(description = "Cria um novo feedback")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Retorna o ..."),
+            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody @Valid FeedbackRequest feedbackRequest) {
         // Cria um novo feedback a partir do DTO de entrada
@@ -38,6 +45,10 @@ public class FeedbackController {
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
     }
 
+    @Operation(description = "Retorna todos os feedbacks")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
     @GetMapping
     public ResponseEntity<List<FeedbackResponse>> getAll() {
         // Retorna todos os feedbacks convertidos em DTO de resposta
@@ -49,6 +60,10 @@ public class FeedbackController {
         return ResponseEntity.ok(responseList); // 200 OK com lista de feedbacks
     }
 
+    @Operation(description = "Retorna um feedback específico")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
     @GetMapping("/{id}")
     public ResponseEntity<FeedbackResponse> getOne(@PathVariable UUID id) {
         // Busca um feedback pelo ID, ou lança exceção se não encontrado
@@ -56,6 +71,10 @@ public class FeedbackController {
         return ResponseEntity.ok(toResponse(feedback)); // 200 OK com o feedback
     }
 
+    @Operation(description = "Atualiza um feedback existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
             @PathVariable UUID id,
@@ -68,6 +87,10 @@ public class FeedbackController {
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 
+    @Operation(description = "Remove um feedback existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         // Remove o feedback se ele existir
