@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * Estrutura de resposta padronizada para mensagens de erro.
+ */
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

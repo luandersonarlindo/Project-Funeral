@@ -13,27 +13,27 @@ import br.com.sexteto.Project.Funeral.exception.ConflictException;
 import br.com.sexteto.Project.Funeral.exception.ExceptionResponse;
 import br.com.sexteto.Project.Funeral.exception.NotFoundException;
 
+/**
+ * Classe responsável por capturar e tratar exceções de forma global no projeto.
+ * Utiliza @RestControllerAdvice para interceptar erros lançados nos
+ * controllers.
+ */
 @RestControllerAdvice
 public class GlobalHandler extends RuntimeException {
 
-    /*
-    // Recurso não encontrado (ex: usuário inexistente)
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFound(NotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-    */
-
+    /**
+     * Trata exceções de entidades não encontradas (404).
+     */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleNotFound(NotFoundException ex) {
         var exception = new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.name());
-
         return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
     }
 
-    // Erros de validação com @Valid
+    /**
+     * Trata exceções geradas por validações com @Valid (400).
+     * Retorna um mapa com os campos inválidos e as mensagens de erro.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -47,15 +47,20 @@ public class GlobalHandler extends RuntimeException {
                 .body(errors);
     }
 
+    /**
+     * Trata exceções de conflito, como duplicidade de dados (409).
+     */
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<String> handleConflict(ConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    // (Opcional) Exceção genérica para erros inesperados
+    /**
+     * Trata exceções genéricas e inesperadas (500).
+     * Evita expor mensagens internas ao cliente.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
-        // Em produção, evite retornar a mensagem da exceção diretamente
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Um erro inesperado ocorreu!");
