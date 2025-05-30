@@ -1,10 +1,13 @@
 package br.com.sexteto.Project.Funeral.service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.com.sexteto.Project.Funeral.Repository.UserRepository;
@@ -32,11 +35,18 @@ public class UserService {
 
     /**
      * Retorna todos os usuários cadastrados.
-     * 
-     * @return Lista de usuários
      */
-    public List<UserModel> findAll() {
-        return userRepository.findAll();
+    public Page<UserModel> findAll() {
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.Direction.ASC,
+                "username");
+        return new PageImpl<>(
+                userRepository.findAll(),
+                pageRequest, size);
     }
 
     /**

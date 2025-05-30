@@ -1,11 +1,10 @@
 package br.com.sexteto.Project.Funeral.controller;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,14 +55,12 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Erro ao buscar usuários")
     })
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAll() {
+    public ResponseEntity<Page<UserResponse>> getAll() {
         // Busca todos os usuários e converte para o formato de resposta
-        var users = userService.findAll();
-        var responseList = users.stream()
-                .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail()))
-                .collect(Collectors.toList());
+        Page<UserModel> users = userService.findAll();
+        Page<UserResponse> responsePage = users.map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail()));
 
-        return ResponseEntity.ok(responseList); // Retorna status 200 (OK) com a lista
+        return ResponseEntity.ok(responsePage); // Retorna status 200 (OK) com a página
     }
 
     @Operation(description = "Retorna um usuário específico")
