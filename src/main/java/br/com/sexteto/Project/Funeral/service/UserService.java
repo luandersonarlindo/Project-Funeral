@@ -21,21 +21,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    /**
-     * Cria ou atualiza um usuário, garantindo que nome de usuário e e-mail sejam
-     * únicos.
-     * 
-     * @param userModel Instância com dados do usuário
-     * @return Usuário persistido no banco
-     */
     public UserModel createOrUpdate(UserModel userModel) {
         validateUniqueUsernameAndEmail(userModel);
         return userRepository.save(userModel);
     }
 
-    /**
-     * Retorna todos os usuários cadastrados.
-     */
     public Page<UserModel> findAll() {
         int page = 0;
         int size = 10;
@@ -49,43 +39,20 @@ public class UserService {
                 pageRequest, size);
     }
 
-    /**
-     * Busca um usuário por ID, retornando Optional vazio se não encontrado.
-     * 
-     * @param id ID do usuário
-     * @return Optional<UserModel>
-     */
     public Optional<UserModel> findById(UUID id) {
         return userRepository.findById(id);
     }
 
-    /**
-     * Busca um usuário por ID ou lança exceção se não existir.
-     * 
-     * @param id ID do usuário
-     * @return Usuário encontrado
-     */
     public UserModel findByIdOrThrow(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
 
-    /**
-     * Remove um usuário do banco de dados.
-     * 
-     * @param userModel Usuário a ser removido
-     */
     public void delete(UserModel userModel) {
         userRepository.delete(userModel);
     }
 
-    /**
-     * Valida se o username e email são únicos, considerando updates.
-     * 
-     * @param userModel Usuário a ser validado
-     */
     private void validateUniqueUsernameAndEmail(UserModel userModel) {
-        // Verifica se o username já está em uso por outro usuário
         boolean usernameExists = userRepository.findByUsername(userModel.getUsername())
                 .filter(existingUser -> !existingUser.getId().equals(userModel.getId()))
                 .isPresent();
@@ -94,7 +61,6 @@ public class UserService {
             throw new ConflictException("Nome de usuário já em uso.");
         }
 
-        // Verifica se o email já está em uso por outro usuário
         boolean emailExists = userRepository.findByEmail(userModel.getEmail())
                 .filter(existingUser -> !existingUser.getId().equals(userModel.getId()))
                 .isPresent();

@@ -31,83 +31,77 @@ import jakarta.validation.Valid;
 @RequestMapping("/feedbacks")
 public class FeedbackController {
 
-    @Autowired
-    private FeedbackService feedbackService;
+        @Autowired
+        private FeedbackService feedbackService;
 
-    @Operation(description = "Cria um novo feedback")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Retorna o ..."),
-            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
-    @PostMapping
-    public ResponseEntity<Void> save(@RequestBody @Valid FeedbackRequest feedbackRequest) {
-        // Cria um novo feedback a partir do DTO de entrada
-        feedbackService.createFeedback(feedbackRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
-    }
+        @Operation(description = "Cria um novo feedback")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "201", description = "Retorna o ..."),
+                        @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
+        @PostMapping
+        public ResponseEntity<Void> save(@RequestBody @Valid FeedbackRequest feedbackRequest) {
+                feedbackService.createFeedback(feedbackRequest);
+                return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
 
-    @Operation(description = "Retorna todos os feedbacks")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
-            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
-    @GetMapping
-    public ResponseEntity<List<FeedbackResponse>> getAll() {
-        // Retorna todos os feedbacks convertidos em DTO de resposta
-        var feedbacks = feedbackService.findAll();
-        var responseList = feedbacks.stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+        @Operation(description = "Retorna todos os feedbacks")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+                        @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
+        @GetMapping
+        public ResponseEntity<List<FeedbackResponse>> getAll() {
+                var feedbacks = feedbackService.findAll();
+                var responseList = feedbacks.stream()
+                                .map(this::toResponse)
+                                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(responseList); // 200 OK com lista de feedbacks
-    }
+                return ResponseEntity.ok(responseList);
+        }
 
-    @Operation(description = "Retorna um feedback específico")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
-            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
-    @GetMapping("/{id}")
-    public ResponseEntity<FeedbackResponse> getOne(@PathVariable UUID id) {
-        // Busca um feedback pelo ID, ou lança exceção se não encontrado
-        var feedback = feedbackService.findByIdOrThrow(id);
-        return ResponseEntity.ok(toResponse(feedback)); // 200 OK com o feedback
-    }
+        @Operation(description = "Retorna um feedback específico")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+                        @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
+        @GetMapping("/{id}")
+        public ResponseEntity<FeedbackResponse> getOne(@PathVariable UUID id) {
+                var feedback = feedbackService.findByIdOrThrow(id);
+                return ResponseEntity.ok(toResponse(feedback));
+        }
 
-    @Operation(description = "Atualiza um feedback existente")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
-            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> update(
-            @PathVariable UUID id,
-            @RequestBody @Valid FeedbackUpdateRequest feedbackRequest) {
-        // Busca o feedback existente e atualiza com os novos dados
-        var feedback = feedbackService.findByIdOrThrow(id);
-        BeanUtils.copyProperties(feedbackRequest, feedback);
+        @Operation(description = "Atualiza um feedback existente")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+                        @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
+        @PutMapping("/{id}")
+        public ResponseEntity<Void> update(
+                        @PathVariable UUID id,
+                        @RequestBody @Valid FeedbackUpdateRequest feedbackRequest) {
+                var feedback = feedbackService.findByIdOrThrow(id);
+                BeanUtils.copyProperties(feedbackRequest, feedback);
 
-        feedbackService.updateFeedback(id, feedbackRequest);
-        return ResponseEntity.noContent().build(); // 204 No Content
-    }
+                feedbackService.updateFeedback(id, feedbackRequest);
+                return ResponseEntity.noContent().build();
+        }
 
-    @Operation(description = "Remove um feedback existente")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Retorna o ..."),
-            @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        // Remove o feedback se ele existir
-        var feedback = feedbackService.findByIdOrThrow(id);
-        feedbackService.delete(feedback);
+        @Operation(description = "Remove um feedback existente")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Retorna o ..."),
+                        @ApiResponse(responseCode = "400", description = "Não existe o valor com id informado") })
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> delete(@PathVariable UUID id) {
+                var feedback = feedbackService.findByIdOrThrow(id);
+                feedbackService.delete(feedback);
 
-        return ResponseEntity.noContent().build(); // 204 No Content
-    }
+                return ResponseEntity.noContent().build();
+        }
 
-    // Método auxiliar para converter modelo em DTO de resposta
-    private FeedbackResponse toResponse(FeedbackModel model) {
-        return new FeedbackResponse(
-                model.getId(),
-                model.getComment(),
-                model.getRating(),
-                model.getCreatedAt(),
-                model.getUser().getId(),
-                model.getFuneralHome().getId());
-    }
+        private FeedbackResponse toResponse(FeedbackModel model) {
+                return new FeedbackResponse(
+                                model.getId(),
+                                model.getComment(),
+                                model.getRating(),
+                                model.getCreatedAt(),
+                                model.getUser().getId(),
+                                model.getFuneralHome().getId());
+        }
 }

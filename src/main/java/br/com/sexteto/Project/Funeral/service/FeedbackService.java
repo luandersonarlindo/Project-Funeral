@@ -29,12 +29,6 @@ public class FeedbackService {
     @Autowired
     private FuneralHomeRepository funeralHomeRepository;
 
-    /**
-     * Cria um novo feedback com base no request, associando usuário e funerária.
-     *
-     * @param request dados do feedback
-     * @return feedback criado
-     */
     public FeedbackModel createFeedback(FeedbackRequest request) {
         UserModel user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
@@ -52,33 +46,15 @@ public class FeedbackService {
         return feedbackRepository.save(feedback);
     }
 
-    /**
-     * Retorna todos os feedbacks cadastrados.
-     *
-     * @return lista de feedbacks
-     */
     public List<FeedbackModel> findAll() {
         return feedbackRepository.findAll();
     }
 
-    /**
-     * Busca um feedback pelo ID ou lança exceção se não encontrado.
-     *
-     * @param id identificador do feedback
-     * @return feedback encontrado
-     */
     public FeedbackModel findByIdOrThrow(UUID id) {
         return feedbackRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Feedback não encontrado"));
     }
 
-    /**
-     * Atualiza o comentário e a nota de um feedback existente.
-     *
-     * @param id identificador do feedback
-     * @param request dados atualizados
-     * @return feedback atualizado
-     */
     public FeedbackModel updateFeedback(UUID id, FeedbackUpdateRequest request) {
         FeedbackModel feedback = findByIdOrThrow(id);
         feedback.setComment(request.comment());
@@ -87,11 +63,6 @@ public class FeedbackService {
         return feedbackRepository.save(feedback);
     }
 
-    /**
-     * Exclui um feedback do banco de dados.
-     *
-     * @param feedbackModel entidade a ser deletada
-     */
     public void delete(FeedbackModel feedbackModel) {
         feedbackRepository.delete(feedbackModel);
     }

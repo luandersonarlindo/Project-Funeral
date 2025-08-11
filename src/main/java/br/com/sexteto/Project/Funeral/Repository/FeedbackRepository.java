@@ -7,12 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.sexteto.Project.Funeral.model.FeedbackModel;
 
+
 @Repository
 public interface FeedbackRepository extends JpaRepository<FeedbackModel, UUID> {
-
-    /**
-     * Verifica se já existe feedback de um usuário para uma funerária específica.
-     */
 
     boolean existsByFuneralHomeIdAndUserId(UUID funeralHomeId, UUID userId);
 }
